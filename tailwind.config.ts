@@ -9,6 +9,11 @@ export default {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				Gilroy: ['var(--font-gilroy)'],
+				Cirka: ['var(--font-cirka)'],
+				OverpassMono: ['var(--font-overpass-mono)']
+			},
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
