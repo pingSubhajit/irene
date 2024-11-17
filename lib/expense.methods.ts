@@ -1,3 +1,5 @@
+'use server'
+
 import {db} from '@/db/db'
 import {eq} from 'drizzle-orm'
 import {expense, ExpenseInsert} from '@/db/schema'
