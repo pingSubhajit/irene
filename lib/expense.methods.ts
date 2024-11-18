@@ -11,6 +11,10 @@ export const addExpenseToDB = async (expenseValues: (typeof expense.$inferInsert
 
 export const getExpensesFromDB = async (userId: string) => {
 	return db.query.expense.findMany({
-		where: eq(expense.userId, userId)
+		where: eq(expense.userId, userId),
+		with: {
+			category: true,
+			vendor: true
+		}
 	})
 }

@@ -8,6 +8,13 @@
       "when": 1731823758060,
       "tag": "0000_smooth_hannibal_king",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1731899701807,
+      "tag": "0001_slow_northstar",
+      "breakpoints": true
     }
   ]
 }

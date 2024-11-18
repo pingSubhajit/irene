@@ -1,4 +1,4 @@
-import {cn} from '@/lib/utils'
+import {cn, defaultCurrencyFormat} from '@/lib/utils'
 import * as React from 'react'
 
 type InputType = React.HTMLInputTypeAttribute | 'currency';
@@ -7,13 +7,6 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 	currencyFormat?: Intl.NumberFormat;
 	type?: InputType;
 }
-
-const defaultCurrencyFormat = new Intl.NumberFormat('en-IN', {
-	style: 'currency',
-	currency: 'INR',
-	minimumFractionDigits: 2,
-	maximumFractionDigits: 2
-})
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	({className, type = 'text', currencyFormat, onChange, onFocus, ...props}, ref) => {

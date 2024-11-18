@@ -19,7 +19,7 @@ import {expenseVendor} from '@/db/expenseVendor.schema'
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
 import {useState} from 'react'
 import {ChevronDown, Loader2} from 'lucide-react'
-import {cn, convertCurrencyValueToNumeric} from '@/lib/utils'
+import {cn, convertCurrencyValueToNumeric, getInitialsFromName} from '@/lib/utils'
 import {expenseCategory} from '@/db/schema'
 import {addExpenseToDB} from '@/lib/expense.methods'
 import {createClient} from '@/utils/supabase/client'
@@ -157,7 +157,7 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 										<CredenzaTrigger className="flex items-center">
 											{expenseVendors.find(vendor => vendor.id === form.getValues('vendorId')) && <Avatar className="w-7 h-7 mr-1.5">
 												<AvatarImage src={expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.logo || ''} />
-												<AvatarFallback>{expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name}</AvatarFallback>
+												<AvatarFallback>{getInitialsFromName(expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name)}</AvatarFallback>
 											</Avatar>}
 											<span>
 												{expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name || 'Select a vendor'}
@@ -239,7 +239,7 @@ const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}
 						<div className="flex items-center gap-2">
 							<Avatar className="w-10 h-10">
 								<AvatarImage src={vendor.logo || ''} />
-								<AvatarFallback>{vendor.name}</AvatarFallback>
+								<AvatarFallback>{getInitialsFromName(vendor.name)}</AvatarFallback>
 							</Avatar>
 							<span className="text-lg font-medium">{vendor.name}</span>
 						</div>
