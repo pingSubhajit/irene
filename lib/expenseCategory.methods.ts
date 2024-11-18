@@ -14,3 +14,9 @@ export const getExpenseCategoriesFromDB = async (userId: string) => {
 		where: eq(expenseCategory.userId, userId)
 	})
 }
+
+export const getExpenseCategoryByIdFromDB = async (categoryId: string) => {
+	return db.query.expenseCategory.findFirst({
+		where: eq(expenseCategory.id, categoryId)
+	})
+}

@@ -3,8 +3,7 @@
 import {expense as expenseModel, expenseCategory, expenseVendor} from '@/db/schema'
 import {Card, CardContent} from '@/components/ui/card'
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
-import {cn, defaultCurrencyFormat, getInitialsFromName} from '@/lib/utils'
-import {DateTime} from 'luxon'
+import {cn, defaultCurrencyFormat, formatDate, getInitialsFromName} from '@/lib/utils'
 
 const ExpenseCard = ({expense, className}: {
 	expense: (typeof expenseModel.$inferSelect) & {
@@ -34,7 +33,7 @@ const ExpenseCard = ({expense, className}: {
 				<div>
 					<p className="text-2xl font-medium text-right font-Cirka">{defaultCurrencyFormat.format(parseFloat(expense.amount))}</p>
 					<div className="flex items-center justify-end gap-2">
-						<p className="text-sm opacity-80 text-right">{DateTime.fromJSDate(expense.createdAt!).toLocaleString(DateTime.DATE_SHORT)}</p>
+						<p className="text-sm opacity-80 text-right">{formatDate(expense.createdAt!)}</p>
 						<div className="flex items-center gap-1">
 							<div
 								className="w-3 h-3 rounded-[2px]"

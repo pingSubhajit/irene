@@ -1,6 +1,6 @@
 'use client'
 
-import {createContext, ReactNode, useContext, useMemo, useState} from 'react'
+import {createContext, ReactNode, useContext, useState} from 'react'
 import CreateExpenseDialog from '@/components/dialogs/CreateExpenseDialog'
 import {expenseVendor} from '@/db/expenseVendor.schema'
 import {expenseCategory} from '@/db/schema'
@@ -35,11 +35,9 @@ export const DialogsProvider = ({children, expenseVendors, expenseCategories}: {
 }) => {
 	const [dialogContext, setDialogContext] = useState<DialogContextValueType>(defaultDialogContext)
 
-	const setIsCreateExpenseOpenUnMemoized = (isOpen: boolean) => {
+	const setIsCreateExpenseOpen = (isOpen: boolean) => {
 		setDialogContext({...dialogContext, isCreateExpenseOpen: isOpen})
 	}
-
-	const setIsCreateExpenseOpen = useMemo(() => setIsCreateExpenseOpenUnMemoized, [dialogContext.isCreateExpenseOpen])
 
 	return (
 		<DialogContext.Provider value={

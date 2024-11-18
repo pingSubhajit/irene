@@ -1,5 +1,6 @@
 import {type ClassValue, clsx} from 'clsx'
 import {twMerge} from 'tailwind-merge'
+import {DateTime} from 'luxon'
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
@@ -22,3 +23,7 @@ export const defaultCurrencyFormat = new Intl.NumberFormat('en-IN', {
 	minimumFractionDigits: 2,
 	maximumFractionDigits: 2
 })
+
+export const formatDate = (date: Date, format?: Intl.DateTimeFormatOptions) => {
+	return DateTime.fromJSDate(date).setLocale('fr').toLocaleString(format ?? DateTime.DATE_SHORT)
+}

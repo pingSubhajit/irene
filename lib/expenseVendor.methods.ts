@@ -14,3 +14,9 @@ export const getExpenseVendorsFromDB = async (userId: string) => {
 		where: eq(expenseVendor.userId, userId)
 	})
 }
+
+export const getExpenseVendorByIdFromDB = async (vendorId: string) => {
+	return db.query.expenseVendor.findFirst({
+		where: eq(expenseVendor.id, vendorId)
+	})
+}

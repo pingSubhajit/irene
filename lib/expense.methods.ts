@@ -18,3 +18,13 @@ export const getExpensesFromDB = async (userId: string) => {
 		}
 	})
 }
+
+export const getExpenseByIdFromDB = async (expenseId: string) => {
+	return db.query.expense.findFirst({
+		where: eq(expense.id, expenseId),
+		with: {
+			category: true,
+			vendor: true
+		}
+	})
+}
