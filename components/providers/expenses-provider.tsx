@@ -10,6 +10,7 @@ import {
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
 import {getExpenseByIdFromDB} from '@/lib/expense.methods'
+import {useSelectedFilters} from '@/components/providers/filter-provider'
 
 type ExpensesContextValueType = {
 	expenses: ((typeof expenseModel.$inferSelect) & {
@@ -57,6 +58,23 @@ export const ExpensesProvider = ({children, initialExpenses}: {
 		expenses: initialExpenses
 	})
 
+	const {filters} = useSelectedFilters()
+
+	const [filteredExpenses, setFilteredExpenses] = useState<ExpensesContextValueType>({expenses: []})
+	const [sortedExpenses, setSortedExpenses] = useState<ExpensesContextValueType>({expenses: []})
+
+	useEffect(() => {
+		const filteredExpenses = expensesContext.expenses.filter(expense => {
+			const expenseDate = new Date(expense.createdAt!)
+			const expenseMonth = expenseDate.getMonth()
+			const expenseYear = expenseDate.getFullYear()
+
+			return expenseMonth === filters.selectedMonth && expenseYear === filters.selectedYear
+		})
+
+		setFilteredExpenses({expenses: filteredExpenses})
+	}, [filters.selectedMonth, filters.selectedYear, expensesContext.expenses])
+
 	const addToState = (expense: (typeof expenseModel.$inferSelect) & {
 		category: (typeof expenseCategory.$inferSelect)} & {
 		vendor: (typeof expenseVendor.$inferSelect)
@@ -79,14 +97,16 @@ export const ExpensesProvider = ({children, initialExpenses}: {
 		table: 'expense'
 	}
 
+
 	useEffect(() => {
-		const unsortedExpenses = expensesContext.expenses
+		const unsortedExpenses = filteredExpenses.expenses
 		const sortedExpenses = unsortedExpenses.sort((a, b) => {
 			return new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
 		})
 
-		setExpensesContext({...expensesContext, expenses: sortedExpenses})
-	}, [expensesContext.expenses])
+		setSortedExpenses({expenses: sortedExpenses})
+	}, [filteredExpenses])
+
 
 	useEffect(() => {
 		const channel = supabase
@@ -138,7 +158,7 @@ export const ExpensesProvider = ({children, initialExpenses}: {
 
 	return (
 		<ExpensesContext.Provider value={
-			[expensesContext, {
+			[sortedExpenses, {
 				addToState, removeFromState
 			}]
 		}>
