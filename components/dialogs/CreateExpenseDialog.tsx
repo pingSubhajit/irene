@@ -33,11 +33,12 @@ const formSchema = z.object({
 	amount: z.string()
 })
 
-const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}: {
+const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories, setCreateExpenseVendorOpen}: {
 	open: boolean,
 	setOpen: (isOpen: boolean) => void,
 	expenseVendors: (typeof expenseVendor.$inferInsert)[],
-	expenseCategories: (typeof expenseCategory.$inferInsert)[]
+	expenseCategories: (typeof expenseCategory.$inferInsert)[],
+	setCreateExpenseVendorOpen: (isOpen: boolean) => void
 }) => {
 	const [isVendorSelectOpen, setIsVendorSelectOpen] = useState(false)
 	const [isCategorySelectOpen, setIsCategorySelectOpen] = useState(false)
@@ -169,6 +170,7 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 											selectedVendor={expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))!}
 											selectVendor={(vendor) => form.setValue('vendorId', vendor.id!)}
 											setOpen={setIsVendorSelectOpen}
+											setCreateExpenseVendorOpen={setCreateExpenseVendorOpen}
 										/>
 									</Credenza>
 
@@ -206,27 +208,33 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 
 export default CreateExpenseDialog
 
-const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}: {
+const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen, setCreateExpenseVendorOpen}: {
 	allVendors: (typeof expenseVendor.$inferInsert)[],
 	selectedVendor: (typeof expenseVendor.$inferInsert),
 	selectVendor: (vendor: (typeof expenseVendor.$inferInsert)) => void,
-	setOpen?: (isOpen: boolean) => void
+	setOpen?: (isOpen: boolean) => void,
+	setCreateExpenseVendorOpen: (isOpen: boolean) => void
 }) => {
 	return (
 		<CredenzaContent>
 			<CredenzaHeader>
 				<CredenzaTitle>Select a vendor</CredenzaTitle>
 				<CredenzaDescription>
-					Enter the required details to record an expense.
+					Select a vendor to associate with your expenses.
 				</CredenzaDescription>
 			</CredenzaHeader>
 			<CredenzaBody className="mt-6">
-				<Button className="bg-neutral-950 text-neutral-50 border border-dashed h-auto w-full p-6 hover:border-emerald-400 hover:bg-neutral-950 mb-4">add new vendor</Button>
+				<Button
+					className="bg-neutral-950 text-neutral-50 border border-dashed h-auto w-full p-6
+					hover:border-emerald-400 hover:bg-neutral-950 mb-4"
+					onClick={() => {setCreateExpenseVendorOpen(true)}}
+				>
+					add new vendor
+				</Button>
 
 				<div className="grid grid-cols-2 gap-4">
 					{allVendors.map(vendor => (<button
 						key={vendor.id}
-						value={vendor.id!}
 						className={cn(
 							'border hover:border-emerald-400 transition p-4',
 							selectedVendor.id === vendor.id && 'border-emerald-400 bg-emerald-950/40 text-neutral-50'
