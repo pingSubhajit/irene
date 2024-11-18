@@ -5,22 +5,26 @@ import CreateExpenseDialog from '@/components/dialogs/CreateExpenseDialog'
 import {useExpenseVendors} from '@/components/providers/expense-vendors-provider'
 import {useExpenseCategories} from '@/components/providers/expense-categories-provider'
 import CreateExpenseVendorDialog from '@/components/dialogs/CreateExpenseVendorDialog'
+import CreateExpenseCategoryDialog from '@/components/dialogs/CreateExpenseCategoryDialog'
 
 type DialogContextValueType = {
 	isCreateExpenseOpen: boolean,
-	isCreateExpenseVendorOpen: boolean
+	isCreateExpenseVendorOpen: boolean,
+	isCreateExpenseCategoryOpen: boolean
 }
 
 type UpdateStateFunctionType = (isOpen: boolean) => void
 
 export type DialogContextType = [DialogContextValueType, {
 	setIsCreateExpenseOpen: UpdateStateFunctionType,
-	setIsCreateExpenseVendorOpen: UpdateStateFunctionType
+	setIsCreateExpenseVendorOpen: UpdateStateFunctionType,
+	setIsCreateExpenseCategoryOpen: UpdateStateFunctionType
 }]
 
 const defaultDialogContext: DialogContextValueType = {
 	isCreateExpenseOpen: false,
-	isCreateExpenseVendorOpen: false
+	isCreateExpenseVendorOpen: false,
+	isCreateExpenseCategoryOpen: false
 }
 
 const DialogContext = createContext(
@@ -28,7 +32,8 @@ const DialogContext = createContext(
 		defaultDialogContext,
 		{
 			setIsCreateExpenseOpen: () => {},
-			setIsCreateExpenseVendorOpen: () => {}
+			setIsCreateExpenseVendorOpen: () => {},
+			setIsCreateExpenseCategoryOpen: () => {}
 		}
 	] as DialogContextType
 )
@@ -46,11 +51,16 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 		setDialogContext({...dialogContext, isCreateExpenseVendorOpen: isOpen})
 	}
 
+	const setIsCreateExpenseCategoryOpen = (isOpen: boolean) => {
+		setDialogContext({...dialogContext, isCreateExpenseCategoryOpen: isOpen})
+	}
+
 	return (
 		<DialogContext.Provider value={
 			[dialogContext, {
 				setIsCreateExpenseOpen,
-				setIsCreateExpenseVendorOpen: () => {}
+				setIsCreateExpenseVendorOpen: () => {},
+				setIsCreateExpenseCategoryOpen: () => {}
 			}]
 		}>
 			{children}
@@ -59,6 +69,7 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 				open={dialogContext.isCreateExpenseOpen}
 				setOpen={setIsCreateExpenseOpen}
 				setCreateExpenseVendorOpen={setIsCreateExpenseVendorOpen}
+				setCreateExpenseCategoryOpen={setIsCreateExpenseCategoryOpen}
 				expenseVendors={expenseVendors}
 				expenseCategories={expenseCategories}
 			/>
@@ -66,6 +77,11 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 			<CreateExpenseVendorDialog
 				open={dialogContext.isCreateExpenseVendorOpen}
 				setOpen={setIsCreateExpenseVendorOpen}
+			/>
+
+			<CreateExpenseCategoryDialog
+				open={dialogContext.isCreateExpenseCategoryOpen}
+				setOpen={setIsCreateExpenseCategoryOpen}
 			/>
 		</DialogContext.Provider>
 	)
@@ -89,4 +105,14 @@ export const useCreateExpenseVendorDialog = () => {
 	}
 
 	return {isCreateExpenseVendorDialogOpen: context[0].isCreateExpenseVendorOpen, setIsCreateExpenseVendorDialogOpen: context[1].setIsCreateExpenseVendorOpen}
+}
+
+export const useCreateExpenseCategoryDialog = () => {
+	const context = useContext(DialogContext)
+
+	if (!context) {
+		throw new Error('useDialogs must be used within a DialogsProvider')
+	}
+
+	return {isCreateExpenseCategoryDialogOpen: context[0].isCreateExpenseCategoryOpen, setIsCreateExpenseCategoryDialogOpen: context[1].setIsCreateExpenseCategoryOpen}
 }
