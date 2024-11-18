@@ -6,6 +6,8 @@ import {getExpenseVendorsFromDB} from '@/lib/expenseVendor.methods'
 import {getExpenseCategoriesFromDB} from '@/lib/expenseCategory.methods'
 import {getExpensesFromDB} from '@/lib/expense.methods'
 import {ExpensesProvider} from '@/components/providers/expenses-provider'
+import {ExpenseVendorsProvider} from '@/components/providers/expense-vendors-provider'
+import {ExpenseCategoriesProvider} from '@/components/providers/expense-categories-provider'
 
 const AppLayout = async ({children}: { children: ReactNode }) => {
 	const supabase = await createClient()
@@ -18,11 +20,15 @@ const AppLayout = async ({children}: { children: ReactNode }) => {
 	const expenseCategories = await getExpenseCategoriesFromDB(user!.id)
 
 	return (
-		<ExpensesProvider initialExpenses={expenses}>
-			<DialogsProvider expenseVendors={expenseVendors} expenseCategories={expenseCategories}>
-				{children}
-			</DialogsProvider>
-		</ExpensesProvider>
+		<ExpenseVendorsProvider initialVendors={expenseVendors}>
+			<ExpenseCategoriesProvider initialCategories={expenseCategories}>
+				<ExpensesProvider initialExpenses={expenses}>
+					<DialogsProvider>
+						{children}
+					</DialogsProvider>
+				</ExpensesProvider>
+			</ExpenseCategoriesProvider>
+		</ExpenseVendorsProvider>
 	)
 }
 

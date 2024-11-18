@@ -98,7 +98,6 @@ export const ExpensesProvider = ({children, initialExpenses}: {
 					switch (payload.eventType) {
 					case 'INSERT':
 						startTransition(async () => {
-							// addToState(payload.record as (typeof expenseModel.$inferSelect) & {
 							const expense = await getExpenseByIdFromDB(payload.new.id)
 
 							addToState(expense as (typeof expenseModel.$inferSelect) & {

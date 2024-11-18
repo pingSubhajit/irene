@@ -2,8 +2,8 @@
 
 import {createContext, ReactNode, useContext, useState} from 'react'
 import CreateExpenseDialog from '@/components/dialogs/CreateExpenseDialog'
-import {expenseVendor} from '@/db/expenseVendor.schema'
-import {expenseCategory} from '@/db/schema'
+import {useExpenseVendors} from '@/components/providers/expense-vendors-provider'
+import {useExpenseCategories} from '@/components/providers/expense-categories-provider'
 
 type DialogContextValueType = {
 	isCreateExpenseOpen: boolean
@@ -28,12 +28,10 @@ const DialogContext = createContext(
 	] as DialogContextType
 )
 
-export const DialogsProvider = ({children, expenseVendors, expenseCategories}: {
-	children: ReactNode,
-	expenseVendors: (typeof expenseVendor.$inferInsert)[],
-	expenseCategories: (typeof expenseCategory.$inferInsert)[]
-}) => {
+export const DialogsProvider = ({children}: {children: ReactNode}) => {
 	const [dialogContext, setDialogContext] = useState<DialogContextValueType>(defaultDialogContext)
+	const {vendors: expenseVendors} = useExpenseVendors()
+	const {categories: expenseCategories} = useExpenseCategories()
 
 	const setIsCreateExpenseOpen = (isOpen: boolean) => {
 		setDialogContext({...dialogContext, isCreateExpenseOpen: isOpen})
