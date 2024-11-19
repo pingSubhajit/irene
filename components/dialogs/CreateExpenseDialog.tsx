@@ -24,6 +24,7 @@ import {expenseCategory} from '@/db/schema'
 import {addExpenseToDB} from '@/lib/expense.methods'
 import {createClient} from '@/utils/supabase/client'
 import {toast} from 'sonner'
+import {useCreateExpenseCategoryDialog, useCreateExpenseVendorDialog} from '@/components/providers/dialog-provider'
 
 const formSchema = z.object({
 	categoryId: z.string().uuid(),
@@ -33,13 +34,11 @@ const formSchema = z.object({
 	amount: z.string()
 })
 
-const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories, setCreateExpenseVendorOpen, setCreateExpenseCategoryOpen}: {
+const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}: {
 	open: boolean,
 	setOpen: (isOpen: boolean) => void,
 	expenseVendors: (typeof expenseVendor.$inferInsert)[],
-	expenseCategories: (typeof expenseCategory.$inferInsert)[],
-	setCreateExpenseVendorOpen: (isOpen: boolean) => void,
-	setCreateExpenseCategoryOpen: (isOpen: boolean) => void
+	expenseCategories: (typeof expenseCategory.$inferInsert)[]
 }) => {
 	const [isVendorSelectOpen, setIsVendorSelectOpen] = useState(false)
 	const [isCategorySelectOpen, setIsCategorySelectOpen] = useState(false)
@@ -171,7 +170,6 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories, 
 											selectedVendor={expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))!}
 											selectVendor={(vendor) => form.setValue('vendorId', vendor.id!)}
 											setOpen={setIsVendorSelectOpen}
-											setCreateExpenseVendorOpen={setCreateExpenseVendorOpen}
 										/>
 									</Credenza>
 
@@ -191,7 +189,6 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories, 
 											selectedCategory={expenseCategories.find(category => category.id === form.getValues('categoryId'))!}
 											selectCategory={(category) => form.setValue('categoryId', category.id!)}
 											setOpen={setIsCategorySelectOpen}
-											setCreateExpenseCategoryOpen={setCreateExpenseCategoryOpen}
 										/>
 									</Credenza>
 								</div>
@@ -210,13 +207,14 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories, 
 
 export default CreateExpenseDialog
 
-const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen, setCreateExpenseVendorOpen}: {
+const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}: {
 	allVendors: (typeof expenseVendor.$inferInsert)[],
 	selectedVendor: (typeof expenseVendor.$inferInsert),
 	selectVendor: (vendor: (typeof expenseVendor.$inferInsert)) => void,
 	setOpen?: (isOpen: boolean) => void,
-	setCreateExpenseVendorOpen: (isOpen: boolean) => void
 }) => {
+	const {setIsCreateExpenseVendorDialogOpen} = useCreateExpenseVendorDialog()
+
 	return (
 		<CredenzaContent>
 			<CredenzaHeader>
@@ -229,7 +227,7 @@ const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen,
 				<Button
 					className="bg-neutral-950 text-neutral-50 border border-dashed h-auto w-full p-6
 					hover:border-emerald-400 hover:bg-neutral-950 mb-4"
-					onClick={() => {setCreateExpenseVendorOpen(true)}}
+					onClick={() => {setIsCreateExpenseVendorDialogOpen(true)}}
 				>
 					add new vendor
 				</Button>
@@ -260,13 +258,14 @@ const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen,
 	)
 }
 
-const ExpenseCategorySelect = ({allCategories, selectedCategory, selectCategory, setOpen, setCreateExpenseCategoryOpen}: {
+const ExpenseCategorySelect = ({allCategories, selectedCategory, selectCategory, setOpen}: {
 	allCategories: (typeof expenseCategory.$inferInsert)[],
 	selectedCategory: (typeof expenseCategory.$inferInsert),
 	selectCategory: (vendor: (typeof expenseCategory.$inferInsert)) => void,
-	setOpen?: (isOpen: boolean) => void,
-	setCreateExpenseCategoryOpen: (isOpen: boolean) => void
+	setOpen?: (isOpen: boolean) => void
 }) => {
+	const {setIsCreateExpenseCategoryDialogOpen} = useCreateExpenseCategoryDialog()
+
 	return (
 		<CredenzaContent>
 			<CredenzaHeader>
@@ -279,7 +278,7 @@ const ExpenseCategorySelect = ({allCategories, selectedCategory, selectCategory,
 				<Button
 					className="bg-neutral-950 text-neutral-50 border border-dashed h-auto w-full p-6
 					hover:border-emerald-400 hover:bg-neutral-950 mb-4"
-					onClick={() => {setCreateExpenseCategoryOpen(true)}}
+					onClick={() => {setIsCreateExpenseCategoryDialogOpen(true)}}
 				>
 					add new category
 				</Button>
