@@ -11,6 +11,7 @@ import {getIncomeVendorsFromDB} from '@/lib/incomeVendor.methods'
 import {getIncomeCategoriesFromDB} from '@/lib/incomeCategory.methods'
 import ExpenseProvider from '@/components/providers/expense-provider'
 import IncomeProvider from '@/components/providers/income-provider'
+import AppHeader from '@/components/AppHeader'
 
 const AppLayout = async ({children}: { children: ReactNode }) => {
 	const supabase = await createClient()
@@ -31,7 +32,11 @@ const AppLayout = async ({children}: { children: ReactNode }) => {
 			<ExpenseProvider initialVendors={expenseVendors} initialCategories={expenseCategories} initialExpenses={expenses}>
 				<IncomeProvider initialVendors={incomeVendors} initialCategories={incomeCategories} initialIncomes={incomes}>
 					<DialogsProvider>
-						{children}
+						<div className="pt-8 space-y-8">
+							<AppHeader title="Irene" profileUrl={user!.user_metadata.avatar_url} />
+
+							{children}
+						</div>
 					</DialogsProvider>
 				</IncomeProvider>
 			</ExpenseProvider>
