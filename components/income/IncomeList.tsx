@@ -5,6 +5,7 @@ import IncomeCard from '@/components/income/IncomeCard'
 import {cn} from '@/lib/utils'
 import {Button} from '@/components/ui/button'
 import {useCreateIncomeDialog} from '@/components/providers/dialog-provider'
+import NotFound from '@/components/utilities/NotFound'
 
 const IncomeList = ({incomes, className}: {
 	incomes: ((typeof incomeModel.$inferSelect) & {
@@ -26,6 +27,8 @@ const IncomeList = ({incomes, className}: {
 			</Button>
 
 			{incomes.map(income => <IncomeCard income={income} key={income.id}/>)}
+
+			{!incomes.length && <NotFound className="mt-16 mx-auto" text="no incomes found" description="there are no incomes in your account. why not add some" />}
 		</div>
 	)
 }

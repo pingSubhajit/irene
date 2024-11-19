@@ -5,6 +5,7 @@ import ExpenseCard from '@/components/expense/ExpenseCard'
 import {cn} from '@/lib/utils'
 import {useCreateExpenseDialog} from '@/components/providers/dialog-provider'
 import {Button} from '@/components/ui/button'
+import NotFound from '@/components/utilities/NotFound'
 
 const ExpenseList = ({expenses, className}: {
 	expenses: ((typeof expenseModel.$inferSelect) & {
@@ -26,6 +27,8 @@ const ExpenseList = ({expenses, className}: {
 			</Button>
 
 			{expenses.map(expense => <ExpenseCard expense={expense} key={expense.id}/>)}
+
+			{!expenses.length && <NotFound className="mt-16 mx-auto" text="no expenses found" description="there are no expenses in your account. good job as of yet" />}
 		</div>
 	)
 }
