@@ -123,7 +123,7 @@ const CreateExpenseVendorDialog = ({open, setOpen}: { open: boolean, setOpen: (i
 											}
 										}}
 									>
-										<Avatar className="w-14 h-14 mx-auto">
+										<Avatar className="w-14 h-14 mx-auto max-w-full aspect-square">
 											<AvatarImage src={logo.logo_url}/>
 											<AvatarFallback>{getInitialsFromName(logo.name)}</AvatarFallback>
 										</Avatar>
