@@ -26,7 +26,7 @@ const RootLayout = ({children}: Readonly<{ children: ReactNode }>) => {
 					{/* PROGRESS BAR */}
 					<NextTopLoader showSpinner={false} color="#34d399"/>
 
-					<div className="[&>main]:min-h-svh w-full mx-auto max-w-[600px] [&>main]:py-6">
+					<div className="[&>main]:min-h-svh w-full mx-auto max-w-[600px] px-6 [&>main]:py-6">
 						{children}
 					</div>
 

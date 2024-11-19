@@ -32,7 +32,7 @@ const AppLayout = async ({children}: { children: ReactNode }) => {
 			<ExpenseProvider initialVendors={expenseVendors} initialCategories={expenseCategories} initialExpenses={expenses}>
 				<IncomeProvider initialVendors={incomeVendors} initialCategories={incomeCategories} initialIncomes={incomes}>
 					<DialogsProvider>
-						<div className="px-6 pt-8 space-y-8">
+						<div className="pt-8 space-y-8">
 							<AppHeader title="Irene" profileUrl={user!.user_metadata.avatar_url} />
 
 							{children}

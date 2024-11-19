@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^2.10.1",
+    "@tailwindcss/typography": "^0.5.15",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20",
     "@types/react": "^18",
