@@ -1,8 +1,6 @@
 'use client'
 
-import {expense as expenseModel} from '@/db/expense.schema'
-import {expenseCategory} from '@/db/expenseCategory.schema'
-import {expenseVendor} from '@/db/expenseVendor.schema'
+import {expense as expenseModel, expenseCategory, expenseVendor} from '@/db/schema'
 import ExpenseCard from '@/components/expense/ExpenseCard'
 import {cn} from '@/lib/utils'
 import {useCreateExpenseDialog} from '@/components/providers/dialog-provider'

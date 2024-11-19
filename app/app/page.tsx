@@ -3,6 +3,7 @@ import {Tabs, TabsContent} from '@/components/ui/tabs'
 import IncomeExpenseTabList from '@/app/app/IncomeExpenseTabList'
 import HomeScreenExpensesList from '@/app/app/HomeScreenExpensesList'
 import TimeFrameSelector from '@/components/utilities/TimeFrameSelector'
+import HomeScreenIncomesList from '@/app/app/HomeScreenIncomesList'
 
 const AppHome = async () => {
 	const supabase = await createClient()
@@ -27,7 +28,12 @@ const AppHome = async () => {
 					</div>
 					<HomeScreenExpensesList />
 				</TabsContent>
-				<TabsContent value="income">Change your password here.</TabsContent>
+				<TabsContent value="income" className="">
+					<div className="my-2 flex justify-end items-center">
+						<TimeFrameSelector />
+					</div>
+					<HomeScreenIncomesList />
+				</TabsContent>
 			</Tabs>
 		</main>
 	)
