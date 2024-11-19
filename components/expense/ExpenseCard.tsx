@@ -23,7 +23,7 @@ const ExpenseCard = ({expense, className}: {
 				<CardContent className="py-4 px-0 relative z-10 flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<Avatar className="w-12 h-12">
-							<AvatarImage src={expense.vendor.logo || ''} />
+							{expense.vendor.logo && <AvatarImage src={expense.vendor.logo} />}
 							<AvatarFallback>{getInitialsFromName(expense.vendor.name)}</AvatarFallback>
 						</Avatar>
 

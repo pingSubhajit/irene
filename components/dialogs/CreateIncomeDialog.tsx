@@ -15,16 +15,15 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormDescription, FormField, FormItem} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
-import {expenseVendor} from '@/db/expenseVendor.schema'
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
 import {useState} from 'react'
 import {ChevronDown, Loader2} from 'lucide-react'
 import {cn, convertCurrencyValueToNumeric, getInitialsFromName} from '@/lib/utils'
-import {expenseCategory} from '@/db/schema'
-import {addExpenseToDB} from '@/lib/expense.methods'
+import {incomeCategory, incomeVendor} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {toast} from 'sonner'
-import {useCreateExpenseCategoryDialog, useCreateExpenseVendorDialog} from '@/components/providers/dialog-provider'
+import {useCreateIncomeCategoryDialog, useCreateIncomeVendorDialog} from '@/components/providers/dialog-provider'
+import {addIncomeToDB} from '@/lib/income.methods'
 
 const formSchema = z.object({
 	categoryId: z.string().uuid(),
@@ -34,11 +33,11 @@ const formSchema = z.object({
 	amount: z.string()
 })
 
-const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}: {
+const CreateExpenseDialog = ({open, setOpen, incomeVendors, incomeCategories}: {
 	open: boolean,
 	setOpen: (isOpen: boolean) => void,
-	expenseVendors: (typeof expenseVendor.$inferInsert)[],
-	expenseCategories: (typeof expenseCategory.$inferInsert)[]
+	incomeVendors: (typeof incomeVendor.$inferInsert)[],
+	incomeCategories: (typeof incomeCategory.$inferInsert)[]
 }) => {
 	const [isVendorSelectOpen, setIsVendorSelectOpen] = useState(false)
 	const [isCategorySelectOpen, setIsCategorySelectOpen] = useState(false)
@@ -46,8 +45,8 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			categoryId: expenseCategories[0] ? expenseCategories[0].id : '',
-			vendorId: expenseVendors[0] ? expenseVendors[0].id : '',
+			categoryId: incomeCategories[0] ? incomeCategories[0].id : '',
+			vendorId: incomeVendors[0] ? incomeVendors[0].id : '',
 			particular: '',
 			note: '',
 			amount: ''
@@ -59,17 +58,17 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 			const supabase = createClient()
 			const {data: {user}} = await supabase.auth.getUser()
 
-			const expense = (await addExpenseToDB({
+			const income = (await addIncomeToDB({
 				...values,
 				amount: convertCurrencyValueToNumeric(values.amount).toString(),
 				userId: user!.id
 			}))[0]
 
-			toast.success('Expense recorded successfully.')
+			toast.success('Income recorded successfully.')
 			form.reset()
 			setOpen(false)
 		} catch (error: any) {
-			toast.error('Failed to record expense. Please try again.')
+			toast.error('Failed to record income. Please try again.')
 		}
 	}
 
@@ -80,9 +79,9 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 		} else if (amount === 0) {
 			return 'amount value cannot be zero.'
 		} else if (amount >= 5000 && amount < 20000) {
-			return 'uff! That\'s a lot of money.'
-		} else if (amount >= 20000) {
-			return 'are you sure you did the right thing?'
+			return 'uff! That\'s a hefty amount'
+		} else if (amount >= 30000) {
+			return 'great job. How did you manage that?'
 		} else {
 			return 'enter the amount you spent.'
 		}
@@ -92,9 +91,9 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 		<Credenza open={open} onOpenChange={setOpen}>
 			<CredenzaContent>
 				<CredenzaHeader>
-					<CredenzaTitle>Record an expense</CredenzaTitle>
+					<CredenzaTitle>Record an income</CredenzaTitle>
 					<CredenzaDescription>
-						Enter the required details to record an expense.
+						Enter the required details to record an income.
 					</CredenzaDescription>
 				</CredenzaHeader>
 				<CredenzaBody className="mt-10">
@@ -156,18 +155,18 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 								<div className="mb-3 flex items-center justify-between">
 									<Credenza open={isVendorSelectOpen} onOpenChange={setIsVendorSelectOpen}>
 										<CredenzaTrigger className="flex items-center">
-											{expenseVendors.find(vendor => vendor.id === form.getValues('vendorId')) && <Avatar className="w-7 h-7 mr-1.5">
-												<AvatarImage src={expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.logo || '/404'} />
-												<AvatarFallback>{getInitialsFromName(expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name)}</AvatarFallback>
+											{incomeVendors.find(vendor => vendor.id === form.getValues('vendorId')) && <Avatar className="w-7 h-7 mr-1.5">
+												<AvatarImage src={incomeVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.logo || '/404'} />
+												<AvatarFallback>{getInitialsFromName(incomeVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name)}</AvatarFallback>
 											</Avatar>}
 											<span>
-												{expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name || 'Select a vendor'}
+												{incomeVendors.find(vendor => vendor.id === form.getValues('vendorId'))?.name || 'Select a vendor'}
 											</span>
 											<ChevronDown className="w-4 h-4 ml-1" />
 										</CredenzaTrigger>
-										<ExpenseVendorSelect
-											allVendors={expenseVendors}
-											selectedVendor={expenseVendors.find(vendor => vendor.id === form.getValues('vendorId'))!}
+										<IncomeVendorSelect
+											allVendors={incomeVendors}
+											selectedVendor={incomeVendors.find(vendor => vendor.id === form.getValues('vendorId'))!}
 											selectVendor={(vendor) => form.setValue('vendorId', vendor.id!)}
 											setOpen={setIsVendorSelectOpen}
 										/>
@@ -175,18 +174,18 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 
 									<Credenza open={isCategorySelectOpen} onOpenChange={setIsCategorySelectOpen}>
 										<CredenzaTrigger className="flex items-center">
-											{expenseCategories.find(category => category.id === form.getValues('categoryId')) && <div
+											{incomeCategories.find(category => category.id === form.getValues('categoryId')) && <div
 												className="w-5 h-5 mr-1.5 rounded-[4px]"
-												style={{backgroundColor: `#${expenseCategories.find(category => category.id === form.getValues('categoryId'))?.color}`}}
+												style={{backgroundColor: `#${incomeCategories.find(category => category.id === form.getValues('categoryId'))?.color}`}}
 											/>}
 											<span>
-												{expenseCategories.find(category => category.id === form.getValues('categoryId'))?.name || 'Select a category'}
+												{incomeCategories.find(category => category.id === form.getValues('categoryId'))?.name || 'Select a category'}
 											</span>
 											<ChevronDown className="w-4 h-4 ml-1" />
 										</CredenzaTrigger>
-										<ExpenseCategorySelect
-											allCategories={expenseCategories}
-											selectedCategory={expenseCategories.find(category => category.id === form.getValues('categoryId'))!}
+										<IncomeCategorySelect
+											allCategories={incomeCategories}
+											selectedCategory={incomeCategories.find(category => category.id === form.getValues('categoryId'))!}
 											selectCategory={(category) => form.setValue('categoryId', category.id!)}
 											setOpen={setIsCategorySelectOpen}
 										/>
@@ -207,27 +206,27 @@ const CreateExpenseDialog = ({open, setOpen, expenseVendors, expenseCategories}:
 
 export default CreateExpenseDialog
 
-const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}: {
-	allVendors: (typeof expenseVendor.$inferInsert)[],
-	selectedVendor: (typeof expenseVendor.$inferInsert),
-	selectVendor: (vendor: (typeof expenseVendor.$inferInsert)) => void,
+const IncomeVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}: {
+	allVendors: (typeof incomeVendor.$inferInsert)[],
+	selectedVendor: (typeof incomeVendor.$inferInsert),
+	selectVendor: (vendor: (typeof incomeVendor.$inferInsert)) => void,
 	setOpen?: (isOpen: boolean) => void,
 }) => {
-	const {setIsCreateExpenseVendorDialogOpen} = useCreateExpenseVendorDialog()
+	const {setIsCreateIncomeVendorDialogOpen} = useCreateIncomeVendorDialog()
 
 	return (
 		<CredenzaContent>
 			<CredenzaHeader>
 				<CredenzaTitle>Select a vendor</CredenzaTitle>
 				<CredenzaDescription>
-					Select a vendor to associate with your expenses.
+					Select a vendor to associate with your income.
 				</CredenzaDescription>
 			</CredenzaHeader>
 			<CredenzaBody className="mt-6">
 				<Button
 					className="bg-neutral-950 text-neutral-50 border border-dashed h-auto w-full p-6
 					hover:border-emerald-400 hover:bg-neutral-950 mb-4"
-					onClick={() => {setIsCreateExpenseVendorDialogOpen(true)}}
+					onClick={() => {setIsCreateIncomeVendorDialogOpen(true)}}
 				>
 					add new vendor
 				</Button>
@@ -258,27 +257,27 @@ const ExpenseVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}
 	)
 }
 
-const ExpenseCategorySelect = ({allCategories, selectedCategory, selectCategory, setOpen}: {
-	allCategories: (typeof expenseCategory.$inferInsert)[],
-	selectedCategory: (typeof expenseCategory.$inferInsert),
-	selectCategory: (vendor: (typeof expenseCategory.$inferInsert)) => void,
+const IncomeCategorySelect = ({allCategories, selectedCategory, selectCategory, setOpen}: {
+	allCategories: (typeof incomeCategory.$inferInsert)[],
+	selectedCategory: (typeof incomeCategory.$inferInsert),
+	selectCategory: (vendor: (typeof incomeCategory.$inferInsert)) => void,
 	setOpen?: (isOpen: boolean) => void
 }) => {
-	const {setIsCreateExpenseCategoryDialogOpen} = useCreateExpenseCategoryDialog()
+	const {setIsCreateIncomeCategoryDialogOpen} = useCreateIncomeCategoryDialog()
 
 	return (
 		<CredenzaContent>
 			<CredenzaHeader>
-				<CredenzaTitle>Select an expense category</CredenzaTitle>
+				<CredenzaTitle>Select an income category</CredenzaTitle>
 				<CredenzaDescription>
-					Enter the required details to record an expense.
+					Enter the required details to record an income.
 				</CredenzaDescription>
 			</CredenzaHeader>
 			<CredenzaBody className="mt-6">
 				<Button
 					className="bg-neutral-950 text-neutral-50 border border-dashed h-auto w-full p-6
 					hover:border-emerald-400 hover:bg-neutral-950 mb-4"
-					onClick={() => {setIsCreateExpenseCategoryDialogOpen(true)}}
+					onClick={() => {setIsCreateIncomeCategoryDialogOpen(true)}}
 				>
 					add new category
 				</Button>

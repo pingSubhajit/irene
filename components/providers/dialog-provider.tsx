@@ -7,6 +7,11 @@ import {useExpenseCategories} from '@/components/providers/expense-categories-pr
 import CreateExpenseVendorDialog from '@/components/dialogs/CreateExpenseVendorDialog'
 import CreateExpenseCategoryDialog from '@/components/dialogs/CreateExpenseCategoryDialog'
 import SingleExpenseDialog from '@/components/dialogs/SingleExpenseDialog'
+import {useIncomeVendors} from '@/components/providers/income-vendors-provider'
+import {useIncomeCategories} from '@/components/providers/income-categories-provider'
+import CreateIncomeDialog from '@/components/dialogs/CreateIncomeDialog'
+import CreateIncomeVendorDialog from '@/components/dialogs/CreateIncomeVendorDialog'
+import CreateIncomeCategoryDialog from '@/components/dialogs/CreateIncomeCategoryDialog'
 
 type DialogContextValueType = {
 	isCreateExpenseOpen: boolean,
@@ -15,6 +20,13 @@ type DialogContextValueType = {
 	isSingleExpenseOpen: {
 		isOpen: boolean,
 		expense: Record<string, string>
+	},
+	isCreateIncomeOpen: boolean,
+	isCreateIncomeVendorOpen: boolean,
+	isCreateIncomeCategoryOpen: boolean,
+	isSingleIncomeOpen: {
+		isOpen: boolean,
+		income: Record<string, string>
 	}
 }
 
@@ -26,6 +38,10 @@ export type DialogContextType = [DialogContextValueType, {
 	setIsCreateExpenseVendorOpen: UpdateStateFunctionType,
 	setIsCreateExpenseCategoryOpen: UpdateStateFunctionType,
 	setIsSingleExpenseOpen: UpdateStateWithContextFunctionType,
+	setIsCreateIncomeOpen: UpdateStateFunctionType,
+	setIsCreateIncomeVendorOpen: UpdateStateFunctionType,
+	setIsCreateIncomeCategoryOpen: UpdateStateFunctionType,
+	setIsSingleIncomeOpen: UpdateStateWithContextFunctionType
 }]
 
 const defaultDialogContext: DialogContextValueType = {
@@ -35,6 +51,13 @@ const defaultDialogContext: DialogContextValueType = {
 	isSingleExpenseOpen: {
 		isOpen: false,
 		expense: {}
+	},
+	isCreateIncomeOpen: false,
+	isCreateIncomeVendorOpen: false,
+	isCreateIncomeCategoryOpen: false,
+	isSingleIncomeOpen: {
+		isOpen: false,
+		income: {}
 	}
 }
 
@@ -45,7 +68,11 @@ const DialogContext = createContext(
 			setIsCreateExpenseOpen: () => {},
 			setIsCreateExpenseVendorOpen: () => {},
 			setIsCreateExpenseCategoryOpen: () => {},
-			setIsSingleExpenseOpen: () => {}
+			setIsSingleExpenseOpen: () => {},
+			setIsCreateIncomeOpen: () => {},
+			setIsCreateIncomeVendorOpen: () => {},
+			setIsCreateIncomeCategoryOpen: () => {},
+			setIsSingleIncomeOpen: () => {}
 		}
 	] as DialogContextType
 )
@@ -54,6 +81,9 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 	const [dialogContext, setDialogContext] = useState<DialogContextValueType>(defaultDialogContext)
 	const {vendors: expenseVendors} = useExpenseVendors()
 	const {categories: expenseCategories} = useExpenseCategories()
+
+	const {vendors: incomeVendors} = useIncomeVendors()
+	const {categories: incomeCategories} = useIncomeCategories()
 
 	const setIsCreateExpenseOpen = (isOpen: boolean) => {
 		setDialogContext({...dialogContext, isCreateExpenseOpen: isOpen})
@@ -71,13 +101,33 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 		setDialogContext({...dialogContext, isSingleExpenseOpen: {isOpen, expense: context}})
 	}
 
+	const setIsCreateIncomeOpen = (isOpen: boolean) => {
+		setDialogContext({...dialogContext, isCreateIncomeOpen: isOpen})
+	}
+
+	const setIsCreateIncomeVendorOpen = (isOpen: boolean) => {
+		setDialogContext({...dialogContext, isCreateIncomeVendorOpen: isOpen})
+	}
+
+	const setIsCreateIncomeCategoryOpen = (isOpen: boolean) => {
+		setDialogContext({...dialogContext, isCreateIncomeCategoryOpen: isOpen})
+	}
+
+	const setIsSingleIncomeOpen = (isOpen: boolean, context: Record<string, string>) => {
+		setDialogContext({...dialogContext, isSingleIncomeOpen: {isOpen, income: context}})
+	}
+
 	return (
 		<DialogContext.Provider value={
 			[dialogContext, {
 				setIsCreateExpenseOpen,
 				setIsCreateExpenseVendorOpen,
 				setIsCreateExpenseCategoryOpen,
-				setIsSingleExpenseOpen
+				setIsSingleExpenseOpen,
+				setIsCreateIncomeOpen,
+				setIsCreateIncomeVendorOpen,
+				setIsCreateIncomeCategoryOpen,
+				setIsSingleIncomeOpen
 			}]
 		}>
 			{children}
@@ -103,6 +153,23 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 				open={dialogContext.isSingleExpenseOpen.isOpen}
 				setOpen={(isOpen: boolean) => setIsSingleExpenseOpen(isOpen, dialogContext.isSingleExpenseOpen.expense)}
 				expense={dialogContext.isSingleExpenseOpen.expense as any}
+			/>
+
+			<CreateIncomeDialog
+				open={dialogContext.isCreateIncomeOpen}
+				setOpen={setIsCreateIncomeOpen}
+				incomeVendors={incomeVendors}
+				incomeCategories={incomeCategories}
+			/>
+
+			<CreateIncomeVendorDialog
+				open={dialogContext.isCreateIncomeVendorOpen}
+				setOpen={setIsCreateIncomeVendorOpen}
+			/>
+
+			<CreateIncomeCategoryDialog
+				open={dialogContext.isCreateIncomeCategoryOpen}
+				setOpen={setIsCreateIncomeCategoryOpen}
 			/>
 		</DialogContext.Provider>
 	)
@@ -146,4 +213,44 @@ export const useSingleExpenseDialog = () => {
 	}
 
 	return {isSingleExpenseDialogOpen: context[0].isSingleExpenseOpen, setIsSingleExpenseDialogOpen: context[1].setIsSingleExpenseOpen}
+}
+
+export const useCreateIncomeDialog = () => {
+	const context = useContext(DialogContext)
+
+	if (!context) {
+		throw new Error('useDialogs must be used within a DialogsProvider')
+	}
+
+	return {isCreateIncomeDialogOpen: context[0].isCreateIncomeOpen, setIsCreateIncomeDialogOpen: context[1].setIsCreateIncomeOpen}
+}
+
+export const useCreateIncomeVendorDialog = () => {
+	const context = useContext(DialogContext)
+
+	if (!context) {
+		throw new Error('useDialogs must be used within a DialogsProvider')
+	}
+
+	return {isCreateIncomeVendorDialogOpen: context[0].isCreateIncomeVendorOpen, setIsCreateIncomeVendorDialogOpen: context[1].setIsCreateIncomeVendorOpen}
+}
+
+export const useCreateIncomeCategoryDialog = () => {
+	const context = useContext(DialogContext)
+
+	if (!context) {
+		throw new Error('useDialogs must be used within a DialogsProvider')
+	}
+
+	return {isCreateIncomeCategoryDialogOpen: context[0].isCreateIncomeCategoryOpen, setIsCreateIncomeCategoryDialogOpen: context[1].setIsCreateIncomeCategoryOpen}
+}
+
+export const useSingleIncomeDialog = () => {
+	const context = useContext(DialogContext)
+
+	if (!context) {
+		throw new Error('useDialogs must be used within a DialogsProvider')
+	}
+
+	return {isSingleIncomeDialogOpen: context[0].isSingleIncomeOpen, setIsSingleIncomeDialogOpen: context[1].setIsSingleIncomeOpen}
 }

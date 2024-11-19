@@ -7,8 +7,8 @@ import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {getExpenseByIdFromDB} from '@/lib/expense.methods'
 import {useSelectedFilters} from '@/components/providers/filter-provider'
+import {getIncomeByIdFromDB} from '@/lib/income.methods'
 
 type IncomesContextValueType = {
 	incomes: ((typeof incomeModel.$inferSelect) & {
@@ -116,9 +116,9 @@ export const IncomesProvider = ({children, initialIncomes}: {
 					switch (payload.eventType) {
 					case 'INSERT':
 						startTransition(async () => {
-							const expense = await getExpenseByIdFromDB(payload.new.id)
+							const income = await getIncomeByIdFromDB(payload.new.id)
 
-							addToState(expense as (typeof incomeModel.$inferSelect) & {
+							addToState(income as (typeof incomeModel.$inferSelect) & {
 									category: (typeof incomeCategory.$inferSelect)} & {
 									vendor: (typeof incomeVendor.$inferSelect)
 								})

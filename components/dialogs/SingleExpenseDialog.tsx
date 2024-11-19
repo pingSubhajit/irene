@@ -36,7 +36,7 @@ const SingleExpenseDialog = ({open, setOpen, expense}: {
 					<div className="flex flex-col items-center gap-6">
 						<div>
 							<Avatar className="w-24 h-24">
-								<AvatarImage src={expense.vendor.logo || ''}/>
+								{expense.vendor.logo && <AvatarImage src={expense.vendor.logo}/>}
 								<AvatarFallback>{getInitialsFromName(expense.vendor.name)}</AvatarFallback>
 							</Avatar>
 							<p className="mt-2 text-center text-xs opacity-80">paid to</p>

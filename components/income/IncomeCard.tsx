@@ -22,7 +22,7 @@ const IncomeCard = ({income, className}: {
 			<CardContent className="py-4 px-0 relative z-10 flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Avatar className="w-12 h-12">
-						<AvatarImage src={income.vendor.logo || ''} />
+						{income.vendor.logo && <AvatarImage src={income.vendor.logo} />}
 						<AvatarFallback>{getInitialsFromName(income.vendor.name)}</AvatarFallback>
 					</Avatar>
 
