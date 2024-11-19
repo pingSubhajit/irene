@@ -10,6 +10,7 @@ import {getIncomesFromDB} from '@/lib/income.methods'
 import {getIncomeVendorsFromDB} from '@/lib/incomeVendor.methods'
 import {getIncomeCategoriesFromDB} from '@/lib/incomeCategory.methods'
 import ExpenseProvider from '@/components/providers/expense-provider'
+import IncomeProvider from '@/components/providers/income-provider'
 
 const AppLayout = async ({children}: { children: ReactNode }) => {
 	const supabase = await createClient()
@@ -28,9 +29,11 @@ const AppLayout = async ({children}: { children: ReactNode }) => {
 	return (
 		<FilterProvider>
 			<ExpenseProvider initialVendors={expenseVendors} initialCategories={expenseCategories} initialExpenses={expenses}>
-				<DialogsProvider>
-					{children}
-				</DialogsProvider>
+				<IncomeProvider initialVendors={incomeVendors} initialCategories={incomeCategories} initialIncomes={incomes}>
+					<DialogsProvider>
+						{children}
+					</DialogsProvider>
+				</IncomeProvider>
 			</ExpenseProvider>
 		</FilterProvider>
 	)

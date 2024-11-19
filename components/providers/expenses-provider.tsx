@@ -1,9 +1,7 @@
 'use client'
 
 import {createContext, ReactNode, startTransition, useContext, useEffect, useState} from 'react'
-import {expense as expenseModel} from '@/db/expense.schema'
-import {expenseCategory} from '@/db/expenseCategory.schema'
-import {expenseVendor} from '@/db/expenseVendor.schema'
+import {expense as expenseModel, expenseCategory, expenseVendor} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
@@ -110,7 +108,7 @@ export const ExpensesProvider = ({children, initialExpenses}: {
 
 	useEffect(() => {
 		const channel = supabase
-			.channel('EXPENSES::ALL')
+			.channel('EXPENSE::ALL')
 			.on(
 				'postgres_changes',
 				supabaseSubscribeConfig as RealtimePostgresChangesFilter<`${REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.ALL}`>,

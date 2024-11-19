@@ -1,19 +1,19 @@
 'use client'
 
 import {createContext, ReactNode, startTransition, useContext, useEffect, useState} from 'react'
-import {expenseVendor} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {getExpenseVendorByIdFromDB} from '@/lib/expenseVendor.methods'
+import {incomeVendor} from '@/db/schema'
+import {getIncomeVendorByIdFromDB} from '@/lib/incomeVendor.methods'
 
 type VendorsContextValueType = {
-	vendors: (typeof expenseVendor.$inferSelect)[]
+	vendors: (typeof incomeVendor.$inferSelect)[]
 }
 
-type AddToStateFunctionType = (vendor: typeof expenseVendor.$inferSelect) => void
+type AddToStateFunctionType = (vendor: typeof incomeVendor.$inferSelect) => void
 
 type RemoveFromStateFunctionType = (vendorId: string) => void
 
@@ -36,16 +36,16 @@ const VendorsContext = createContext(
 	] as VendorsContextType
 )
 
-export const ExpenseVendorsProvider = ({children, initialVendors}: {
+export const IncomeVendorsProvider = ({children, initialVendors}: {
 	children: ReactNode,
-	initialVendors: (typeof expenseVendor.$inferSelect)[]
+	initialVendors: (typeof incomeVendor.$inferSelect)[]
 }) => {
 	const [vendorsContext, setVendorsContext] = useState<VendorsContextValueType>({
 		...defaultVendorsContext,
 		vendors: initialVendors
 	})
 
-	const addToState = (vendor: typeof expenseVendor.$inferSelect) => {
+	const addToState = (vendor: typeof incomeVendor.$inferSelect) => {
 		setVendorsContext({...vendorsContext, vendors: [vendor, ...vendorsContext.vendors]})
 	}
 
@@ -61,12 +61,12 @@ export const ExpenseVendorsProvider = ({children, initialVendors}: {
 	const supabaseSubscribeConfig = {
 		event: '*',
 		schema: 'public',
-		table: 'expense_vendor'
+		table: 'income_vendor'
 	}
 
 	useEffect(() => {
 		const channel = supabase
-			.channel('EXPENSE:VENDORS::ALL')
+			.channel('INCOME:VENDORS::ALL')
 			.on(
 				'postgres_changes',
 				supabaseSubscribeConfig as RealtimePostgresChangesFilter<`${REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.ALL}`>,
@@ -74,8 +74,8 @@ export const ExpenseVendorsProvider = ({children, initialVendors}: {
 					switch (payload.eventType) {
 					case 'INSERT':
 						startTransition(async () => {
-							const vendor = await getExpenseVendorByIdFromDB(payload.new.id)
-							addToState(vendor as (typeof expenseVendor.$inferSelect))
+							const vendor = await getIncomeVendorByIdFromDB(payload.new.id)
+							addToState(vendor as (typeof incomeVendor.$inferSelect))
 						})
 						break
 
@@ -119,11 +119,11 @@ export const ExpenseVendorsProvider = ({children, initialVendors}: {
 	)
 }
 
-export const useExpenseVendors = () => {
+export const useIncomeVendors = () => {
 	const context = useContext(VendorsContext)
 
 	if (!context) {
-		throw new Error('useExpenseVendors must be used within a ExpenseVendorsProvider')
+		throw new Error('useIncomeVendors must be used within a IncomeVendorsProvider')
 	}
 
 	return {

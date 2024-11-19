@@ -1,19 +1,19 @@
 'use client'
 
 import {createContext, ReactNode, startTransition, useContext, useEffect, useState} from 'react'
-import {expenseCategory} from '@/db/schema'
+import {incomeCategory} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {getExpenseCategoryByIdFromDB} from '@/lib/expenseCategory.methods'
+import {getIncomeCategoryByIdFromDB} from '@/lib/incomeCategory.methods'
 
 type CategoriesContextValueType = {
-	categories: (typeof expenseCategory.$inferSelect)[]
+	categories: (typeof incomeCategory.$inferSelect)[]
 }
 
-type AddToStateFunctionType = (category: typeof expenseCategory.$inferSelect) => void
+type AddToStateFunctionType = (category: typeof incomeCategory.$inferSelect) => void
 
 type RemoveFromStateFunctionType = (category: string) => void
 
@@ -36,16 +36,16 @@ const CategoriesContext = createContext(
 	] as CategoriesContextType
 )
 
-export const ExpenseCategoriesProvider = ({children, initialCategories}: {
+export const IncomeCategoriesProvider = ({children, initialCategories}: {
 	children: ReactNode,
-	initialCategories: (typeof expenseCategory.$inferSelect)[]
+	initialCategories: (typeof incomeCategory.$inferSelect)[]
 }) => {
 	const [categoriesContext, setCategoriesContext] = useState<CategoriesContextValueType>({
 		...defaultCategoriesContext,
 		categories: initialCategories
 	})
 
-	const addToState = (category: typeof expenseCategory.$inferSelect) => {
+	const addToState = (category: typeof incomeCategory.$inferSelect) => {
 		setCategoriesContext({...categoriesContext, categories: [category, ...categoriesContext.categories]})
 	}
 
@@ -61,12 +61,12 @@ export const ExpenseCategoriesProvider = ({children, initialCategories}: {
 	const supabaseSubscribeConfig = {
 		event: '*',
 		schema: 'public',
-		table: 'expense_category'
+		table: 'income_category'
 	}
 
 	useEffect(() => {
 		const channel = supabase
-			.channel('EXPENSE:CATEGORIES::ALL')
+			.channel('INCOME:CATEGORIES::ALL')
 			.on(
 				'postgres_changes',
 				supabaseSubscribeConfig as RealtimePostgresChangesFilter<`${REALTIME_POSTGRES_CHANGES_LISTEN_EVENT.ALL}`>,
@@ -74,8 +74,8 @@ export const ExpenseCategoriesProvider = ({children, initialCategories}: {
 					switch (payload.eventType) {
 					case 'INSERT':
 						startTransition(async () => {
-							const category = await getExpenseCategoryByIdFromDB(payload.new.id)
-							addToState(category as (typeof expenseCategory.$inferSelect))
+							const category = await getIncomeCategoryByIdFromDB(payload.new.id)
+							addToState(category as (typeof incomeCategory.$inferSelect))
 						})
 						break
 
@@ -119,11 +119,11 @@ export const ExpenseCategoriesProvider = ({children, initialCategories}: {
 	)
 }
 
-export const useExpenseCategories = () => {
+export const useIncomeCategories = () => {
 	const context = useContext(CategoriesContext)
 
 	if (!context) {
-		throw new Error('useExpenseCategories must be used within a ExpenseCategoriesProvider')
+		throw new Error('useIncomeCategories must be used within a IncomeCategoriesProvider')
 	}
 
 	return {
