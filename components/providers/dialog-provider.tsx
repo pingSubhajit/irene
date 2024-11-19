@@ -12,6 +12,7 @@ import {useIncomeCategories} from '@/components/providers/income-categories-prov
 import CreateIncomeDialog from '@/components/dialogs/CreateIncomeDialog'
 import CreateIncomeVendorDialog from '@/components/dialogs/CreateIncomeVendorDialog'
 import CreateIncomeCategoryDialog from '@/components/dialogs/CreateIncomeCategoryDialog'
+import SingleIncomeDialog from '@/components/dialogs/SingleIncomeDialog'
 
 type DialogContextValueType = {
 	isCreateExpenseOpen: boolean,
@@ -170,6 +171,12 @@ export const DialogsProvider = ({children}: {children: ReactNode}) => {
 			<CreateIncomeCategoryDialog
 				open={dialogContext.isCreateIncomeCategoryOpen}
 				setOpen={setIsCreateIncomeCategoryOpen}
+			/>
+
+			<SingleIncomeDialog
+				open={dialogContext.isSingleIncomeOpen.isOpen}
+				setOpen={(isOpen: boolean) => setIsSingleIncomeOpen(isOpen, dialogContext.isSingleIncomeOpen.income)}
+				income={dialogContext.isSingleIncomeOpen.income as any}
 			/>
 		</DialogContext.Provider>
 	)
