@@ -3,6 +3,7 @@ import Link from 'next/link'
 import {createClient} from '@/utils/supabase/server'
 import {redirect} from 'next/navigation'
 import banner from '@/public/banner.png'
+import logo from '@/public/logo.png'
 import {Button} from '@/components/ui/button'
 import {Separator} from '@/components/ui/separator'
 
@@ -13,7 +14,12 @@ const Home = async () => {
 	if (user) return redirect('/app') // Redirect to app if user is logged in
 
 	return (
-		<main className="h-screen flex flex-col justify-end">
+		<main className="h-screen flex flex-col justify-end relative">
+			<div className="absolute top-32 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+				<Image src={logo} alt="Irene logo" className="w-12 h-12" />
+				<p className="font-Cirka text-xl font-bold">Irene: Simple Finance Tracker</p>
+			</div>
+
 			<Image src={banner} alt="Banner" className="translate-y-1/4" />
 
 			<div className="w-full bg-neutral-950/60 backdrop-blur-md p-8 pb-0 flex flex-col items-center gap-6">
