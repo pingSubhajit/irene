@@ -3,7 +3,6 @@ import {redirect} from 'next/navigation'
 import {defaultUrl} from '@/lib/constants'
 
 export const GET = async () => {
-	process.stdout.write(`${defaultUrl}/auth/callback`)
 	const supabase = await createClient()
 	const {data, error} = await supabase.auth.signInWithOAuth({
 		provider: 'google',
