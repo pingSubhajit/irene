@@ -28,7 +28,7 @@ const SingleExpenseDialog = ({open, setOpen, expense}: {
 						<Receipt className="w-5 h-5 opacity-80"/>
 						Expense details
 					</CredenzaTitle>
-					<CredenzaDescription>
+					<CredenzaDescription className="text-center">
 						You paid {defaultCurrencyFormat.format(parseFloat(expense.amount))} to {expense.vendor.name} on {formatDate(expense.createdAt!, DateTime.DATE_FULL)}.
 					</CredenzaDescription>
 				</CredenzaHeader>

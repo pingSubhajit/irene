@@ -28,7 +28,7 @@ const SingleIncomeDialog = ({open, setOpen, income}: {
 						<Receipt className="w-5 h-5 opacity-80"/>
 						Income details
 					</CredenzaTitle>
-					<CredenzaDescription>
+					<CredenzaDescription className="text-center">
 						You got {defaultCurrencyFormat.format(parseFloat(income.amount))} from {income.vendor.name} on {formatDate(income.createdAt!, DateTime.DATE_FULL)}.
 					</CredenzaDescription>
 				</CredenzaHeader>
