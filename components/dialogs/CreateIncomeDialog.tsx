@@ -16,7 +16,7 @@ import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormDescription, FormField, FormItem} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {ChevronDown, Loader2} from 'lucide-react'
 import {cn, convertCurrencyValueToNumeric, getInitialsFromName} from '@/lib/utils'
 import {incomeCategory, incomeVendor} from '@/db/schema'
@@ -214,6 +214,15 @@ const IncomeVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}:
 }) => {
 	const {setIsCreateIncomeVendorDialogOpen} = useCreateIncomeVendorDialog()
 
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			allVendors.length && selectVendor(allVendors[0])
+			if (setOpen) setOpen(false)
+		}, 500)
+
+		return () => clearTimeout(timeout)
+	}, [allVendors])
+
 	return (
 		<CredenzaContent>
 			<CredenzaHeader>
@@ -264,6 +273,15 @@ const IncomeCategorySelect = ({allCategories, selectedCategory, selectCategory, 
 	setOpen?: (isOpen: boolean) => void
 }) => {
 	const {setIsCreateIncomeCategoryDialogOpen} = useCreateIncomeCategoryDialog()
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			allCategories.length && selectCategory(allCategories[0])
+			if (setOpen) setOpen(false)
+		}, 500)
+
+		return () => clearTimeout(timeout)
+	}, [allCategories])
 
 	return (
 		<CredenzaContent>
