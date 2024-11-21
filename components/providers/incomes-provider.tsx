@@ -8,7 +8,7 @@ import {
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
 import {useSelectedFilters} from '@/components/providers/filter-provider'
-import {getIncomeByIdFromDB} from '@/lib/income.methods'
+import {getIncomesFromDB} from '@/lib/income.methods'
 
 type IncomesContextValueType = {
 	incomes: ((typeof incomeModel.$inferSelect) & {
@@ -87,6 +87,13 @@ export const IncomesProvider = ({children, initialIncomes}: {
 		})
 	}
 
+	const updateEntireState = (incomes: ((typeof incomeModel.$inferSelect) & {
+		category: (typeof incomeCategory.$inferSelect)} & {
+		vendor: (typeof incomeVendor.$inferSelect)
+	})[]) => {
+		setIncomesContext({...incomesContext, incomes})
+	}
+
 	const supabase = createClient()
 
 	const supabaseSubscribeConfig = {
@@ -117,11 +124,8 @@ export const IncomesProvider = ({children, initialIncomes}: {
 					case 'INSERT':
 						startTransition(async () => {
 							try {
-								const income = await getIncomeByIdFromDB(payload.new.id)
-								if (income) addToState(income as (typeof incomeModel.$inferSelect) & {
-									category: (typeof incomeCategory.$inferSelect)} & {
-									vendor: (typeof incomeVendor.$inferSelect)
-								})
+								const incomes = await getIncomesFromDB()
+								if (incomes) updateEntireState(incomes)
 							} catch (error: any) {}
 						})
 						break

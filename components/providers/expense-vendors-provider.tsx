@@ -1,13 +1,13 @@
 'use client'
 
 import {createContext, ReactNode, startTransition, useContext, useEffect, useState} from 'react'
-import {expenseVendor, incomeVendor} from '@/db/schema'
+import {expenseVendor} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {getExpenseVendorByIdFromDB} from '@/lib/expenseVendor.methods'
+import {getExpenseVendorsFromDB} from '@/lib/expenseVendor.methods'
 
 type VendorsContextValueType = {
 	vendors: (typeof expenseVendor.$inferSelect)[]
@@ -56,6 +56,10 @@ export const ExpenseVendorsProvider = ({children, initialVendors}: {
 		})
 	}
 
+	const updateEntireState = (vendors: (typeof expenseVendor.$inferSelect)[]) => {
+		setVendorsContext({...vendorsContext, vendors})
+	}
+
 	const supabase = createClient()
 
 	const supabaseSubscribeConfig = {
@@ -75,8 +79,8 @@ export const ExpenseVendorsProvider = ({children, initialVendors}: {
 					case 'INSERT':
 						startTransition(async () => {
 							try {
-								const vendor = await getExpenseVendorByIdFromDB(payload.new.id)
-								if (vendor) addToState(vendor as (typeof incomeVendor.$inferSelect))
+								const vendors = await getExpenseVendorsFromDB()
+								if (vendors) updateEntireState(vendors)
 							} catch (error: any) {}
 						})
 						break

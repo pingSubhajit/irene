@@ -6,8 +6,8 @@ import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {incomeVendor} from '@/db/schema'
-import {getIncomeVendorByIdFromDB} from '@/lib/incomeVendor.methods'
+import {expenseVendor, incomeVendor} from '@/db/schema'
+import {getIncomeVendorsFromDB} from '@/lib/incomeVendor.methods'
 
 type VendorsContextValueType = {
 	vendors: (typeof incomeVendor.$inferSelect)[]
@@ -56,6 +56,10 @@ export const IncomeVendorsProvider = ({children, initialVendors}: {
 		})
 	}
 
+	const updateEntireState = (vendors: (typeof expenseVendor.$inferSelect)[]) => {
+		setVendorsContext({...vendorsContext, vendors})
+	}
+
 	const supabase = createClient()
 
 	const supabaseSubscribeConfig = {
@@ -75,8 +79,8 @@ export const IncomeVendorsProvider = ({children, initialVendors}: {
 					case 'INSERT':
 						startTransition(async () => {
 							try {
-								const vendor = await getIncomeVendorByIdFromDB(payload.new.id)
-								if (vendor) addToState(vendor as (typeof incomeVendor.$inferSelect))
+								const vendors = await getIncomeVendorsFromDB()
+								if (vendors) updateEntireState(vendors)
 							} catch (error: any) {}
 						})
 						break

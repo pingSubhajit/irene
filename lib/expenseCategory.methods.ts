@@ -10,9 +10,12 @@ export const addExpenseCategoryToDB = async (categoryValues: (typeof expenseCate
 	return db.insert(expenseCategory).values(params).returning()
 }
 
-export const getExpenseCategoriesFromDB = async (userId: string) => {
+export const getExpenseCategoriesFromDB = async () => {
+	const supabase = await createClient()
+	const {data: {user}} = await supabase.auth.getUser()
+
 	return db.query.expenseCategory.findMany({
-		where: eq(expenseCategory.userId, userId)
+		where: eq(expenseCategory.userId, user!.id)
 	})
 }
 

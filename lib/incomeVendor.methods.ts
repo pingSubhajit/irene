@@ -10,9 +10,12 @@ export const addIncomeVendorToDB = async (vendorValues: (typeof incomeVendor.$in
 	return db.insert(incomeVendor).values(params).returning()
 }
 
-export const getIncomeVendorsFromDB = async (userId: string) => {
+export const getIncomeVendorsFromDB = async () => {
+	const supabase = await createClient()
+	const {data: {user}} = await supabase.auth.getUser()
+
 	return db.query.incomeVendor.findMany({
-		where: eq(incomeVendor.userId, userId)
+		where: eq(incomeVendor.userId, user!.id)
 	})
 }
 

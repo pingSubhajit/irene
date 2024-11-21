@@ -1,13 +1,13 @@
 'use client'
 
 import {createContext, ReactNode, startTransition, useContext, useEffect, useState} from 'react'
-import {incomeCategory} from '@/db/schema'
+import {expenseCategory, incomeCategory} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {getIncomeCategoryByIdFromDB} from '@/lib/incomeCategory.methods'
+import {getIncomeCategoriesFromDB} from '@/lib/incomeCategory.methods'
 
 type CategoriesContextValueType = {
 	categories: (typeof incomeCategory.$inferSelect)[]
@@ -56,6 +56,10 @@ export const IncomeCategoriesProvider = ({children, initialCategories}: {
 		})
 	}
 
+	const updateEntireState = (categories: (typeof expenseCategory.$inferSelect)[]) => {
+		setCategoriesContext({...categoriesContext, categories})
+	}
+
 	const supabase = createClient()
 
 	const supabaseSubscribeConfig = {
@@ -75,8 +79,8 @@ export const IncomeCategoriesProvider = ({children, initialCategories}: {
 					case 'INSERT':
 						startTransition(async () => {
 							try {
-								const category = await getIncomeCategoryByIdFromDB(payload.new.id)
-								if (category) addToState(category as (typeof incomeCategory.$inferSelect))
+								const categories = await getIncomeCategoriesFromDB()
+								if (categories) updateEntireState(categories)
 							} catch (error: any) {}
 						})
 						break

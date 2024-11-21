@@ -19,13 +19,13 @@ const AppLayout = async ({children}: { children: ReactNode }) => {
 
 	if (!user) return redirect('/')
 
-	const expenses = await getExpensesFromDB(user!.id)
-	const expenseVendors = await getExpenseVendorsFromDB(user!.id)
-	const expenseCategories = await getExpenseCategoriesFromDB(user!.id)
+	const expenses = await getExpensesFromDB()
+	const expenseVendors = await getExpenseVendorsFromDB()
+	const expenseCategories = await getExpenseCategoriesFromDB()
 
-	const incomes = await getIncomesFromDB(user!.id)
-	const incomeVendors = await getIncomeVendorsFromDB(user!.id)
-	const incomeCategories = await getIncomeCategoriesFromDB(user!.id)
+	const incomes = await getIncomesFromDB()
+	const incomeVendors = await getIncomeVendorsFromDB()
+	const incomeCategories = await getIncomeCategoriesFromDB()
 
 	return (
 		<FilterProvider>
@@ -34,7 +34,6 @@ const AppLayout = async ({children}: { children: ReactNode }) => {
 					<DialogsProvider>
 						<div className="pt-8 space-y-8">
 							<AppHeader title="Irene" profileUrl={user!.user_metadata.avatar_url} />
-
 							{children}
 						</div>
 					</DialogsProvider>

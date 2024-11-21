@@ -216,7 +216,7 @@ const IncomeVendorSelect = ({allVendors, selectedVendor, selectVendor, setOpen}:
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
-			allVendors.length && selectVendor(allVendors[0])
+			allVendors.length && selectVendor(allVendors[allVendors.length - 1])
 			if (setOpen) setOpen(false)
 		}, 500)
 
@@ -276,7 +276,7 @@ const IncomeCategorySelect = ({allCategories, selectedCategory, selectCategory, 
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
-			allCategories.length && selectCategory(allCategories[0])
+			allCategories.length && selectCategory(allCategories[allCategories.length - 1])
 			if (setOpen) setOpen(false)
 		}, 500)
 

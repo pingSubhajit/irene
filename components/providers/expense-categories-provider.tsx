@@ -7,7 +7,7 @@ import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
 	RealtimePostgresChangesFilter
 } from '@supabase/realtime-js/src/RealtimeChannel'
-import {getExpenseCategoryByIdFromDB} from '@/lib/expenseCategory.methods'
+import {getExpenseCategoriesFromDB} from '@/lib/expenseCategory.methods'
 
 type CategoriesContextValueType = {
 	categories: (typeof expenseCategory.$inferSelect)[]
@@ -56,6 +56,10 @@ export const ExpenseCategoriesProvider = ({children, initialCategories}: {
 		})
 	}
 
+	const updateEntireState = (categories: (typeof expenseCategory.$inferSelect)[]) => {
+		setCategoriesContext({...categoriesContext, categories})
+	}
+
 	const supabase = createClient()
 
 	const supabaseSubscribeConfig = {
@@ -75,8 +79,8 @@ export const ExpenseCategoriesProvider = ({children, initialCategories}: {
 					case 'INSERT':
 						startTransition(async () => {
 							try {
-								const category = await getExpenseCategoryByIdFromDB(payload.new.id)
-								if (category) addToState(category as (typeof expenseCategory.$inferSelect))
+								const categories = await getExpenseCategoriesFromDB()
+								if (categories) updateEntireState(categories)
 							} catch (error: any) {}
 						})
 						break
