@@ -1,7 +1,7 @@
 'use server'
 
 import {db} from '@/db/db'
-import {eq} from 'drizzle-orm'
+import {and, eq} from 'drizzle-orm'
 import {income, IncomeInsert} from '@/db/schema'
 import {createClient} from '@/utils/supabase/server'
 
@@ -37,4 +37,14 @@ export const getIncomeByIdFromDB = async (incomeId: string) => {
 			vendor: true
 		}
 	})
+}
+
+export const removeIncomeByIdFromDB = async (incomeId: string) => {
+	const supabase = await createClient()
+	const {data: {user}} = await supabase.auth.getUser()
+
+	return db.delete(income).where(and(
+		eq(income.id, incomeId),
+		eq(income.userId, user!.id)
+	)).returning()
 }

@@ -7,18 +7,36 @@ import {
 	CredenzaTitle
 } from '@/components/ui/credenza'
 import {expense as expenseModel, expenseCategory, expenseVendor} from '@/db/schema'
-import {Receipt} from 'lucide-react'
+import {Loader2, Receipt, Trash} from 'lucide-react'
 import {defaultCurrencyFormat, formatDate, getInitialsFromName} from '@/lib/utils'
 import {DateTime} from 'luxon'
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
 import {Separator} from '@/components/ui/separator'
+import {removeExpenseByIdFromDB} from '@/lib/expense.methods'
+import {toast} from 'sonner'
+import {Button} from '@/components/ui/button'
+import {useState} from 'react'
 
 const SingleExpenseDialog = ({open, setOpen, expense}: {
 	open: boolean,
 	setOpen: (isOpen: boolean) => void,
 	expense: (typeof expenseModel.$inferSelect) & {vendor: (typeof expenseVendor.$inferSelect), category: (typeof expenseCategory.$inferSelect)}
 }) => {
+	const [isDeleting, setIsDeleting] = useState(false)
 	if (!expense || !expense.id) return null
+
+	const onDelete = async () => {
+		try {
+			setIsDeleting(true)
+			await removeExpenseByIdFromDB(expense.id)
+			setOpen(false)
+			toast.success('Expense deleted successfully!')
+		} catch (error: any) {
+			toast.error(error.message || 'Could not delete the expense. Please try again later.')
+		} finally {
+			setIsDeleting(false)
+		}
+	}
 
 	return (
 		<Credenza open={open} onOpenChange={setOpen}>
@@ -59,6 +77,13 @@ const SingleExpenseDialog = ({open, setOpen, expense}: {
 								<Separator orientation="vertical" className="h-4" />
 								<p className="text-sm opacity-80 text-right">{formatDate(expense.createdAt!)}</p>
 							</div>
+						</div>
+
+						<div className="w-full flex gap-2 mt-4">
+							<Button size="sm" className="w-full" onClick={() => setOpen(false)}>Understood</Button>
+							<Button size="sm" className="w-24" variant="destructive" onClick={onDelete} disabled={isDeleting}>
+								{isDeleting ? <Loader2 className="w-6 h-6 animate-spin" /> : <Trash className="w-4 h-4" />}
+							</Button>
 						</div>
 					</div>
 				</CredenzaBody>

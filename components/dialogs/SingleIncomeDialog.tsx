@@ -7,18 +7,36 @@ import {
 	CredenzaTitle
 } from '@/components/ui/credenza'
 import {income as incomeModel, incomeCategory, incomeVendor} from '@/db/schema'
-import {Receipt} from 'lucide-react'
+import {Loader2, Receipt, Trash} from 'lucide-react'
 import {defaultCurrencyFormat, formatDate, getInitialsFromName} from '@/lib/utils'
 import {DateTime} from 'luxon'
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar'
 import {Separator} from '@/components/ui/separator'
+import {toast} from 'sonner'
+import {useState} from 'react'
+import {removeIncomeByIdFromDB} from '@/lib/income.methods'
+import {Button} from '@/components/ui/button'
 
 const SingleIncomeDialog = ({open, setOpen, income}: {
 	open: boolean,
 	setOpen: (isOpen: boolean) => void,
 	income: (typeof incomeModel.$inferSelect) & {vendor: (typeof incomeVendor.$inferSelect), category: (typeof incomeCategory.$inferSelect)}
 }) => {
+	const [isDeleting, setIsDeleting] = useState(false)
 	if (!income || !income.id) return null
+
+	const onDelete = async () => {
+		try {
+			setIsDeleting(true)
+			await removeIncomeByIdFromDB(income.id)
+			setOpen(false)
+			toast.success('Income deleted successfully!')
+		} catch (error: any) {
+			toast.error(error.message || 'Could not delete the Income. Please try again later.')
+		} finally {
+			setIsDeleting(false)
+		}
+	}
 
 	return (
 		<Credenza open={open} onOpenChange={setOpen}>
@@ -56,9 +74,16 @@ const SingleIncomeDialog = ({open, setOpen, income}: {
 									/>
 									<p className="text-sm opacity-80 text-right">{income.category.name}</p>
 								</div>
-								<Separator orientation="vertical" className="h-4" />
+								<Separator orientation="vertical" className="h-4"/>
 								<p className="text-sm opacity-80 text-right">{formatDate(income.createdAt!)}</p>
 							</div>
+						</div>
+
+						<div className="w-full flex gap-2 mt-4">
+							<Button size="sm" className="w-full" onClick={() => setOpen(false)}>Understood</Button>
+							<Button size="sm" className="w-24" variant="destructive" onClick={onDelete} disabled={isDeleting}>
+								{isDeleting ? <Loader2 className="w-6 h-6 animate-spin"/> : <Trash className="w-4 h-4"/>}
+							</Button>
 						</div>
 					</div>
 				</CredenzaBody>
