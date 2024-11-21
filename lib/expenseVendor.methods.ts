@@ -3,6 +3,7 @@
 import {db} from '@/db/db'
 import {eq} from 'drizzle-orm'
 import {expenseVendor, ExpenseVendorInsert} from '@/db/schema'
+import {createClient} from '@/utils/supabase/server'
 
 export const addExpenseVendorToDB = async (vendorValues: (typeof expenseVendor.$inferInsert)) => {
 	const params = ExpenseVendorInsert.parse(vendorValues)
@@ -16,8 +17,14 @@ export const getExpenseVendorsFromDB = async (userId: string) => {
 }
 
 export const getExpenseVendorByIdFromDB = async (vendorId: string) => {
+	const supabase = await createClient()
+	const {data: {user}} = await supabase.auth.getUser()
+
 	return db.query.expenseVendor.findFirst({
-		where: eq(expenseVendor.id, vendorId)
+		where: (expenseVendor, {eq, and}) => and(
+			eq(expenseVendor.id, vendorId),
+			eq(expenseVendor.userId, user!.id)
+		)
 	})
 }
 

@@ -74,8 +74,10 @@ export const ExpenseCategoriesProvider = ({children, initialCategories}: {
 					switch (payload.eventType) {
 					case 'INSERT':
 						startTransition(async () => {
-							const category = await getExpenseCategoryByIdFromDB(payload.new.id)
-							addToState(category as (typeof expenseCategory.$inferSelect))
+							try {
+								const category = await getExpenseCategoryByIdFromDB(payload.new.id)
+								if (category) addToState(category as (typeof expenseCategory.$inferSelect))
+							} catch (error: any) {}
 						})
 						break
 

@@ -1,7 +1,7 @@
 'use client'
 
 import {createContext, ReactNode, startTransition, useContext, useEffect, useState} from 'react'
-import {expenseVendor} from '@/db/schema'
+import {expenseVendor, incomeVendor} from '@/db/schema'
 import {createClient} from '@/utils/supabase/client'
 import {
 	REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
@@ -74,8 +74,10 @@ export const ExpenseVendorsProvider = ({children, initialVendors}: {
 					switch (payload.eventType) {
 					case 'INSERT':
 						startTransition(async () => {
-							const vendor = await getExpenseVendorByIdFromDB(payload.new.id)
-							addToState(vendor as (typeof expenseVendor.$inferSelect))
+							try {
+								const vendor = await getExpenseVendorByIdFromDB(payload.new.id)
+								if (vendor) addToState(vendor as (typeof incomeVendor.$inferSelect))
+							} catch (error: any) {}
 						})
 						break
 
