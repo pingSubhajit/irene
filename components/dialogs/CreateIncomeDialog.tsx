@@ -126,7 +126,7 @@ const CreateExpenseDialog = ({open, setOpen, incomeVendors, incomeCategories}: {
 									<FormItem className="mb-8">
 										<FormControl>
 											<Input
-												placeholder="add a note"
+												placeholder="add a note (optional)"
 												{...field}
 												className="rounded-[8px] text-center border-none focus-visible:ring-0 bg-neutral-900 w-min mx-auto py-1.5 h-auto text-sm"
 											/>

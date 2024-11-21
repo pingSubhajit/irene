@@ -93,7 +93,7 @@ const CreateIncomeVendorDialog = ({open, setOpen}: { open: boolean, setOpen: (is
 							/>
 
 							{(selectedLogo || logoResults[0]) && <>
-								<p className="mt-6 mb-2">Select logo</p>
+								<p className="mt-6 mb-2">Select logo (optional)</p>
 								<div className="grid grid-cols-5 gap-4">
 									{selectedLogo && !logoResults.find(logo => logo.logo_url === selectedLogo) && <button
 										type="button"
