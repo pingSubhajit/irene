@@ -29,7 +29,7 @@ import {useCreateExpenseCategoryDialog, useCreateExpenseVendorDialog} from '@/co
 const formSchema = z.object({
 	categoryId: z.string().uuid(),
 	vendorId: z.string().uuid(),
-	particular: z.string().min(4),
+	particular: z.string(),
 	note: z.string().optional(),
 	amount: z.string()
 })
