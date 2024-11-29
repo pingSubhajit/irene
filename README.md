@@ -1,4 +1,4 @@
-# Ticker: Long duration stopwatch
+# Irene: Simple Expense Tracker
 A small tool for recording your incomes and expenses. Designed to be simple, fast, and mobile-first.
 No integrations, no fancy analytics, just simply add your expenses and incomes and get a clear
 picture of where your money goes.
