@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 	description: 'Learn about the motivation behind Irene, a simple, mobile-first, finance app to record your incomes and expenses. ' +
 		'Discover the creator, the MIT license, and credits. Irene is free, open-source, and designed for ' +
 		'everyone who wants to understand better where their money goes.',
-	keywords: ['Irene', 'about Ticker', 'finance motivation', 'Irene creator', 'Irene license', 'MIT license',
+	keywords: ['Irene', 'about Irene', 'finance motivation', 'Irene creator', 'Irene license', 'MIT license',
 		'finance app credits', 'open source finance app', 'free finance app', 'expense tracker',
 		'cloud-synced expenses', 'real-time expenses', 'mobile-first finance app', 'minimalistic finance app'
 	]

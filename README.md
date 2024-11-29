@@ -81,6 +81,6 @@ as possible. The project does not enforce any strict guidelines for contribution
 
 ## License
 
-Distributed under the MIT License. See [`LICENSE`](https://github.com/pingSubhajit/ticker/blob/main/LICENSE) for more
+Distributed under the MIT License. See [`LICENSE`](https://github.com/pingSubhajit/irene/blob/main/LICENSE) for more
 information. The project is completely open source and feel free to fork, modify and host your own version.
 No attribution required.
